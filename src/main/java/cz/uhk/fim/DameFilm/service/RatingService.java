@@ -6,10 +6,11 @@ import cz.uhk.fim.DameFilm.dto.out.OutRating;
 import cz.uhk.fim.DameFilm.entity.rating.Rating;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RatingService {
 
-    float getAverageRating(long id);
+    Optional<Long> getAverageRating(long id);
 
     OutRating rate(InRating rating);
 }

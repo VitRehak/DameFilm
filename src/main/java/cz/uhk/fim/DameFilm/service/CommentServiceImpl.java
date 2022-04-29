@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CommentServiceImpl implements CommentService{
+public class CommentServiceImpl implements CommentService {
 
     @Autowired
     CommentRepository commentRepository;
@@ -30,12 +30,12 @@ public class CommentServiceImpl implements CommentService{
         Comment appComment = modelMapper.map(comment, Comment.class);
         appComment.setSend(ZonedDateTime.now(clock));
         commentRepository.save(appComment);
-        return modelMapper.map(appComment,OutComment.class);
+        return modelMapper.map(appComment, OutComment.class);
     }
 
     @Override
-    public List<OutComment> getComments() {
-        List<Comment> comments = (List<Comment>) commentRepository.findAll();
+    public List<OutComment> getComments(long id) {
+        List<Comment> comments = commentRepository.findAllFromMovie(id);
         return comments.stream().map(c -> modelMapper.map(c, OutComment.class)).collect(Collectors.toList());
     }
 }

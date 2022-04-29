@@ -27,15 +27,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/login").permitAll()
                 .antMatchers("/auth/register").permitAll()
                 .antMatchers("/auth/profile/*").permitAll()
-                .antMatchers("/auth/profile/update/*").permitAll()//.hasRole("ADMIN")
-                .antMatchers("/auth/profile/delete/*").permitAll()//.hasRole("ADMIN")
 
                 //Movie
                 .antMatchers("/movie/all").permitAll()
                 .antMatchers("/movie/detail/*").permitAll()
-                .antMatchers("/movie/create").authenticated()
-                .antMatchers("/movie/update/*").hasRole("ADMIN")
-                .antMatchers("/movie/delete/*").hasRole("ADMIN");
+                .antMatchers("/movie/create").authenticated();
 
 
         http

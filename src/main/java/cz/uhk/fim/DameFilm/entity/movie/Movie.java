@@ -1,5 +1,7 @@
 package cz.uhk.fim.DameFilm.entity.movie;
 
+import cz.uhk.fim.DameFilm.entity.rating.Rating;
+import cz.uhk.fim.DameFilm.entity.rating.RatingId;
 import cz.uhk.fim.DameFilm.entity.user.User;
 import lombok.Data;
 
@@ -31,7 +33,7 @@ public class Movie {
     private AgeRating ageRating;
 
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL )
     private User publisher;
 }
 

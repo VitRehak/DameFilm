@@ -3,6 +3,7 @@ package cz.uhk.fim.DameFilm.entity.rating;
 import cz.uhk.fim.DameFilm.entity.movie.Movie;
 import cz.uhk.fim.DameFilm.entity.user.User;
 import lombok.Data;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.io.Serializable;

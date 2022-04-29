@@ -13,5 +13,4 @@ public class InMovie {
     private String director;
     private List<String> actors;
     private AgeRating ageRating;
-//    private User publisher;  //nevim asi ne
 }

@@ -1,8 +1,10 @@
 package cz.uhk.fim.DameFilm.entity.user;
 
 import cz.uhk.fim.DameFilm.entity.comment.Comment;
+import cz.uhk.fim.DameFilm.entity.movie.Movie;
 import cz.uhk.fim.DameFilm.entity.rating.Rating;
 import lombok.Data;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;

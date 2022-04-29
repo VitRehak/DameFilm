@@ -16,6 +16,6 @@ public class OutMovie {
     private ZonedDateTime lastUpdate;
     private List<String> actors;
     private AgeRating ageRating;
-    private User publisher;
+    private OutUserProfile publisher;
     private float averageRating;
 }

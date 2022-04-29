@@ -3,7 +3,8 @@ package cz.uhk.fim.DameFilm.service;
 import cz.uhk.fim.DameFilm.dto.in.InUser;
 import cz.uhk.fim.DameFilm.dto.in.LoginUser;
 import cz.uhk.fim.DameFilm.dto.in.RegisterUser;
-import cz.uhk.fim.DameFilm.dto.out.OutUser;
+import cz.uhk.fim.DameFilm.dto.out.OutUserProfile;
+import cz.uhk.fim.DameFilm.dto.out.OutUserToken;
 import cz.uhk.fim.DameFilm.entity.user.User;
 import cz.uhk.fim.DameFilm.repository.UserRepository;
 import cz.uhk.fim.DameFilm.security.JwtTokenProvider;
@@ -31,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private Clock clock;
 
     @Override
-    public String login(LoginUser user) {
+    public OutUserToken login(LoginUser user) {
 
         Optional<User> userByEmailOp = userRepository.findByEmail(user.getEmail());
         if (userByEmailOp.isEmpty()) {
@@ -45,41 +46,46 @@ public class AuthServiceImpl implements AuthService {
             return null;
         }
         log.info("Logged User with username:" + userByEmail.getUsername());
-        return jwtTokenProvider.createToken(user.getEmail());
+        OutUserToken token = new OutUserToken();
+        token.setToken(jwtTokenProvider.createToken(user.getEmail()));
+        token.setRoles(userByEmail.getRoles());
+        return token;
     }
 
 
     @Override
-    public String register(RegisterUser user) {
+    public OutUserToken register(RegisterUser user) {
 
         Optional<User> userByEmailOp = userRepository.findByEmail(user.getEmail());
         if (userByEmailOp.isPresent()) {
             log.error("Existing User");
             return null;
         }
-        User newUser = modelMapper.map(user, User.class);
-        newUser.setDateOfRegistration(ZonedDateTime.now(clock));
+        User userByEmail = modelMapper.map(user, User.class);
+        userByEmail.setDateOfRegistration(ZonedDateTime.now(clock));
+        userByEmail.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+        userRepository.save(userByEmail);
 
-        newUser.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
-        userRepository.save(newUser);
-
-        log.info("User Registered");
-        return jwtTokenProvider.createToken(user.getEmail());
+        log.info("Registered User with username:" + userByEmail.getUsername());
+        OutUserToken token = new OutUserToken();
+        token.setToken(jwtTokenProvider.createToken(user.getEmail()));
+        token.setRoles(userByEmail.getRoles());
+        return token;
     }
 
     @Override
-    public OutUser getUser(long id) {
+    public OutUserProfile getUser(long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             log.info("User Not Found");
             return null;
         }
         log.error("User Loaded");
-        return modelMapper.map(user.get(), OutUser.class);
+        return modelMapper.map(user.get(), OutUserProfile.class);
     }
 
     @Override
-    public OutUser deleteUser(long id) {
+    public OutUserProfile deleteUser(long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             log.info("User Not Found");
@@ -87,11 +93,11 @@ public class AuthServiceImpl implements AuthService {
         }
         userRepository.delete(user.get());
         log.error("User Deleted");
-        return modelMapper.map(user.get(), OutUser.class);
+        return modelMapper.map(user.get(), OutUserProfile.class);
     }
 
     @Override
-    public OutUser updateUser(InUser user, long id) {
+    public OutUserProfile updateUser(InUser user, long id) {
         Optional<User> OUser = userRepository.findById(id);
         if (OUser.isEmpty()) {
             log.info("User Not Found");
@@ -103,10 +109,12 @@ public class AuthServiceImpl implements AuthService {
         dbUser.setUsername(appUser.getUsername());
         dbUser.setFirstname(appUser.getFirstname());
         dbUser.setLastname(appUser.getLastname());
-        dbUser.setPassword(BCrypt.hashpw(appUser.getPassword(), BCrypt.gensalt()));
+        if (appUser.getPassword() != null)
+            dbUser.setPassword(BCrypt.hashpw(appUser.getPassword(), BCrypt.gensalt()));
+
 
         userRepository.save(dbUser);
         log.error("User Updated");
-        return modelMapper.map(dbUser, OutUser.class);
+        return modelMapper.map(dbUser, OutUserProfile.class);
     }
 }

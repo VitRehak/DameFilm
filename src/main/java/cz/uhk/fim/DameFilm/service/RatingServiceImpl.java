@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RatingServiceImpl implements RatingService {
@@ -19,7 +20,7 @@ public class RatingServiceImpl implements RatingService {
     ModelMapper modelMapper;
 
     @Override
-    public float getAverageRating(long id) {
+    public Optional<Long> getAverageRating(long id) {
         return ratingRepository.getAverageRating(id);
     }
 
@@ -31,4 +32,5 @@ public class RatingServiceImpl implements RatingService {
         outRating.setRated(true);
         return outRating;
     }
+
 }

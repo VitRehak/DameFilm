@@ -24,10 +24,10 @@ public class CommentController {
         return commentService.addComment(comment);
     }
 
-    @GetMapping("/all")
-    public List<OutComment> getAll(){
+    @GetMapping("/{id}/all")
+    public List<OutComment> getAll(@PathVariable long id){
        log.info("All Comments EndPoint");
-        return commentService.getComments();
+        return commentService.getComments(id);
     }
 
 }

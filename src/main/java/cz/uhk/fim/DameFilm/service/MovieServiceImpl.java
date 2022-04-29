@@ -3,8 +3,8 @@ package cz.uhk.fim.DameFilm.service;
 import cz.uhk.fim.DameFilm.dto.in.InMovie;
 import cz.uhk.fim.DameFilm.dto.out.OutMovie;
 import cz.uhk.fim.DameFilm.entity.movie.Movie;
+import cz.uhk.fim.DameFilm.entity.user.User;
 import cz.uhk.fim.DameFilm.repository.MovieRepository;
-import cz.uhk.fim.DameFilm.repository.RatingRepository;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,17 +38,29 @@ public class MovieServiceImpl implements MovieService {
             return null;
         }
         OutMovie outMovie = modelMapper.map(movie.get(), OutMovie.class);
-        outMovie.setAverageRating(ratingService.getAverageRating(id));
+        Optional<Long> averageRating = ratingService.getAverageRating(id);
+        if (averageRating.isEmpty()) {
+            outMovie.setAverageRating(0);
+        } else {
+            outMovie.setAverageRating(averageRating.get());
+        }
         log.error("Movie Loaded");
         return outMovie;
     }
 
     @Override
     public List<OutMovie> getMovies() {
-        List<Movie> movies = (List<Movie>) movieRepository.findAll();
+        List<Movie> movies = movieRepository.findAll();
         List<OutMovie> outMovies = movies.stream()
                 .map(m -> modelMapper.map(m, OutMovie.class)).collect(Collectors.toList());
-        outMovies.forEach(m -> m.setAverageRating(ratingService.getAverageRating(m.getMovieId())));
+        outMovies.forEach(m -> {
+            Optional<Long> averageRating = ratingService.getAverageRating(m.getMovieId());
+            if (averageRating.isEmpty()) {
+                m.setAverageRating(0);
+            } else {
+                m.setAverageRating(averageRating.get());
+            }
+        });
         log.error("Movies Loaded");
         return outMovies;
     }
@@ -62,13 +74,18 @@ public class MovieServiceImpl implements MovieService {
         }
         movieRepository.deleteById(id);
         OutMovie outMovie = modelMapper.map(movie.get(), OutMovie.class);
-        outMovie.setAverageRating(ratingService.getAverageRating(id));
+        Optional<Long> averageRating = ratingService.getAverageRating(id);
+        if (averageRating.isEmpty()) {
+            outMovie.setAverageRating(0);
+        } else {
+            outMovie.setAverageRating(averageRating.get());
+        }
         log.error("Movie Deleted");
         return outMovie;
     }
 
     @Override
-    public OutMovie updateMovie(InMovie movie,long id) {//todo nacist upravit zapsat
+    public OutMovie updateMovie(InMovie movie, long id) {
         Optional<Movie> OMovie = movieRepository.findById(id);
         if (OMovie.isEmpty()) {
             log.error("Movie Not Found");
@@ -86,19 +103,29 @@ public class MovieServiceImpl implements MovieService {
 
         movieRepository.save(dbMovie);
         OutMovie outMovie = modelMapper.map(dbMovie, OutMovie.class);
-        outMovie.setAverageRating(ratingService.getAverageRating(dbMovie.getMovieId()));
+        Optional<Long> averageRating = ratingService.getAverageRating(dbMovie.getMovieId());
+        if (averageRating.isEmpty()) {
+            outMovie.setAverageRating(0);
+        } else {
+            outMovie.setAverageRating(averageRating.get());
+        }
         log.error("Movie Updated");
         return outMovie;
     }
 
     @Override
-    public OutMovie createMovie(InMovie movie) {
-        Movie appMovie = modelMapper.map(movie, Movie.class);
+    public OutMovie createMovie(InMovie movie, User user) {
+        Movie appMovie = new Movie();
+        appMovie.setName(movie.getName());
+        appMovie.setDirector(movie.getDirector());
+        appMovie.setAgeRating(movie.getAgeRating());
+        appMovie.setActors(movie.getActors());
         appMovie.setLastUpdate(ZonedDateTime.now(clock));
         appMovie.setCreate(ZonedDateTime.now(clock));
+        appMovie.setPublisher(user);
         movieRepository.save(appMovie);
         OutMovie outMovie = modelMapper.map(appMovie, OutMovie.class);
-        outMovie.setAverageRating(ratingService.getAverageRating(appMovie.getMovieId()));
+        outMovie.setAverageRating(5);
         log.error("Movie Created");
         return outMovie;
     }

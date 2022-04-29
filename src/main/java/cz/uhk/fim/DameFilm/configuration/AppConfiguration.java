@@ -18,4 +18,5 @@ public class AppConfiguration {
     public Clock clock() {
         return Clock.systemUTC();
     }
+
 }
