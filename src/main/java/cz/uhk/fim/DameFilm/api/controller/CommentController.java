@@ -18,13 +18,13 @@ public class CommentController {
     @Autowired
     CommentService commentService;
 
-    @PostMapping("/create")
-    public OutComment createComment(@RequestBody InComment comment){
+    @PostMapping("/create/{id}")
+    public OutComment createComment(@RequestBody InComment comment,@PathVariable long id){
         log.info("Create Comment EndPoint");
-        return commentService.addComment(comment);
+        return commentService.addComment(comment, id);
     }
 
-    @GetMapping("/{id}/all")
+    @GetMapping("/all/{id}")
     public List<OutComment> getAll(@PathVariable long id){
        log.info("All Comments EndPoint");
         return commentService.getComments(id);

@@ -14,7 +14,7 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id" )
+    @Column(name = "comment_id")
     private long commentId;
 
     @Column(nullable = false)
@@ -23,10 +23,10 @@ public class Comment {
     private ZonedDateTime send;
 
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User author;
 
     @JoinColumn(name = "movie_id", nullable = false, updatable = false)
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Movie movie;
 }

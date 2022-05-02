@@ -4,7 +4,7 @@ import cz.uhk.fim.DameFilm.dto.in.InUser;
 import cz.uhk.fim.DameFilm.dto.in.LoginUser;
 import cz.uhk.fim.DameFilm.dto.in.RegisterUser;
 import cz.uhk.fim.DameFilm.dto.out.OutUserProfile;
-import cz.uhk.fim.DameFilm.dto.out.OutUserToken;
+import cz.uhk.fim.DameFilm.dto.out.OutUserLogin;
 import cz.uhk.fim.DameFilm.entity.user.User;
 import cz.uhk.fim.DameFilm.repository.UserRepository;
 import cz.uhk.fim.DameFilm.security.JwtTokenProvider;
@@ -32,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private Clock clock;
 
     @Override
-    public OutUserToken login(LoginUser user) {
+    public OutUserLogin login(LoginUser user) {
 
         Optional<User> userByEmailOp = userRepository.findByEmail(user.getEmail());
         if (userByEmailOp.isEmpty()) {
@@ -46,15 +46,16 @@ public class AuthServiceImpl implements AuthService {
             return null;
         }
         log.info("Logged User with username:" + userByEmail.getUsername());
-        OutUserToken token = new OutUserToken();
+        OutUserLogin token = new OutUserLogin();
         token.setToken(jwtTokenProvider.createToken(user.getEmail()));
         token.setRoles(userByEmail.getRoles());
+        token.setUserId(userByEmail.getUserId());
         return token;
     }
 
 
     @Override
-    public OutUserToken register(RegisterUser user) {
+    public OutUserLogin register(RegisterUser user) {
 
         Optional<User> userByEmailOp = userRepository.findByEmail(user.getEmail());
         if (userByEmailOp.isPresent()) {
@@ -67,9 +68,10 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(userByEmail);
 
         log.info("Registered User with username:" + userByEmail.getUsername());
-        OutUserToken token = new OutUserToken();
+        OutUserLogin token = new OutUserLogin();
         token.setToken(jwtTokenProvider.createToken(user.getEmail()));
         token.setRoles(userByEmail.getRoles());
+        token.setUserId(userByEmail.getUserId());
         return token;
     }
 

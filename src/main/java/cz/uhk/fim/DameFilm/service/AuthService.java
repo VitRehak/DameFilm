@@ -4,12 +4,12 @@ import cz.uhk.fim.DameFilm.dto.in.InUser;
 import cz.uhk.fim.DameFilm.dto.in.LoginUser;
 import cz.uhk.fim.DameFilm.dto.in.RegisterUser;
 import cz.uhk.fim.DameFilm.dto.out.OutUserProfile;
-import cz.uhk.fim.DameFilm.dto.out.OutUserToken;
+import cz.uhk.fim.DameFilm.dto.out.OutUserLogin;
 
 public interface AuthService {
-    OutUserToken login(LoginUser user);
+    OutUserLogin login(LoginUser user);
 
-    OutUserToken register(RegisterUser user);
+    OutUserLogin register(RegisterUser user);
 
     OutUserProfile getUser(long id);
 

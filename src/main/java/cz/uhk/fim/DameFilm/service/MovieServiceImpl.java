@@ -3,11 +3,15 @@ package cz.uhk.fim.DameFilm.service;
 import cz.uhk.fim.DameFilm.dto.in.InMovie;
 import cz.uhk.fim.DameFilm.dto.out.OutMovie;
 import cz.uhk.fim.DameFilm.entity.movie.Movie;
+import cz.uhk.fim.DameFilm.entity.rating.Rating;
 import cz.uhk.fim.DameFilm.entity.user.User;
 import cz.uhk.fim.DameFilm.repository.MovieRepository;
+import cz.uhk.fim.DameFilm.repository.RatingRepository;
+import cz.uhk.fim.DameFilm.security.JwtUserDetails;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
@@ -21,7 +25,7 @@ import java.util.stream.Collectors;
 public class MovieServiceImpl implements MovieService {
 
     @Autowired
-    RatingService ratingService;
+    RatingRepository ratingRepository;
     @Autowired
     MovieRepository movieRepository;
     @Autowired
@@ -38,7 +42,7 @@ public class MovieServiceImpl implements MovieService {
             return null;
         }
         OutMovie outMovie = modelMapper.map(movie.get(), OutMovie.class);
-        Optional<Long> averageRating = ratingService.getAverageRating(id);
+        Optional<Float> averageRating = ratingRepository.getAverageRating(id);
         if (averageRating.isEmpty()) {
             outMovie.setAverageRating(0);
         } else {
@@ -49,12 +53,22 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Movie getAppMovie(long id) {
+        Optional<Movie> OMovie = movieRepository.findById(id);
+        if (OMovie.isEmpty()) {
+            log.error("Movie Not Found");
+            return null;
+        }
+        return OMovie.get();
+    }
+
+    @Override
     public List<OutMovie> getMovies() {
         List<Movie> movies = movieRepository.findAll();
         List<OutMovie> outMovies = movies.stream()
                 .map(m -> modelMapper.map(m, OutMovie.class)).collect(Collectors.toList());
         outMovies.forEach(m -> {
-            Optional<Long> averageRating = ratingService.getAverageRating(m.getMovieId());
+            Optional<Float> averageRating = ratingRepository.getAverageRating(m.getMovieId());
             if (averageRating.isEmpty()) {
                 m.setAverageRating(0);
             } else {
@@ -74,7 +88,7 @@ public class MovieServiceImpl implements MovieService {
         }
         movieRepository.deleteById(id);
         OutMovie outMovie = modelMapper.map(movie.get(), OutMovie.class);
-        Optional<Long> averageRating = ratingService.getAverageRating(id);
+        Optional<Float> averageRating = ratingRepository.getAverageRating(id);
         if (averageRating.isEmpty()) {
             outMovie.setAverageRating(0);
         } else {
@@ -103,7 +117,7 @@ public class MovieServiceImpl implements MovieService {
 
         movieRepository.save(dbMovie);
         OutMovie outMovie = modelMapper.map(dbMovie, OutMovie.class);
-        Optional<Long> averageRating = ratingService.getAverageRating(dbMovie.getMovieId());
+        Optional<Float> averageRating = ratingRepository.getAverageRating(dbMovie.getMovieId());
         if (averageRating.isEmpty()) {
             outMovie.setAverageRating(0);
         } else {
@@ -125,7 +139,7 @@ public class MovieServiceImpl implements MovieService {
         appMovie.setPublisher(user);
         movieRepository.save(appMovie);
         OutMovie outMovie = modelMapper.map(appMovie, OutMovie.class);
-        outMovie.setAverageRating(5);
+        outMovie.setAverageRating(0);
         log.error("Movie Created");
         return outMovie;
     }

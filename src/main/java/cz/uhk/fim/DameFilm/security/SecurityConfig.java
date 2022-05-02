@@ -31,8 +31,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //Movie
                 .antMatchers("/movie/all").permitAll()
                 .antMatchers("/movie/detail/*").permitAll()
-                .antMatchers("/movie/create").authenticated();
+                .antMatchers("/movie/create").authenticated()
 
+                //Comment
+                .antMatchers("/comment/create/*").authenticated()
+
+                //Rating
+                .antMatchers("/rating/rate/*").authenticated()
+                .antMatchers("/rating/rated/*").authenticated();
 
         http
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

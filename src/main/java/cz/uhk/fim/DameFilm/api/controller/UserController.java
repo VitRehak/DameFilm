@@ -5,7 +5,7 @@ import cz.uhk.fim.DameFilm.dto.in.InUser;
 import cz.uhk.fim.DameFilm.dto.in.LoginUser;
 import cz.uhk.fim.DameFilm.dto.in.RegisterUser;
 import cz.uhk.fim.DameFilm.dto.out.OutUserProfile;
-import cz.uhk.fim.DameFilm.dto.out.OutUserToken;
+import cz.uhk.fim.DameFilm.dto.out.OutUserLogin;
 import cz.uhk.fim.DameFilm.security.JwtTokenProvider;
 import cz.uhk.fim.DameFilm.security.UserSecurityService;
 import cz.uhk.fim.DameFilm.service.AuthService;
@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Log4j2
@@ -33,13 +31,13 @@ public class UserController {
     UserSecurityService userSecurityService;
 
     @PostMapping("/register")
-    public OutUserToken register(@RequestBody RegisterUser user) {
+    public OutUserLogin register(@RequestBody RegisterUser user) {
         log.info("Registration EndPoint");
         return authService.register(user);
     }
 
     @PostMapping("/login")
-    public OutUserToken login(@RequestBody LoginUser user) {
+    public OutUserLogin login(@RequestBody LoginUser user) {
         log.info("Login EndPoint");
         return authService.login(user);
     }

@@ -11,6 +11,4 @@ import java.time.ZonedDateTime;
 public class InComment {
 
     private String text;
-    private User author;
-    private Movie movie;
 }

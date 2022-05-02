@@ -1,7 +1,6 @@
 package cz.uhk.fim.DameFilm.dto.out;
 
 import cz.uhk.fim.DameFilm.entity.movie.AgeRating;
-import cz.uhk.fim.DameFilm.entity.user.User;
 import lombok.Data;
 
 import java.time.ZonedDateTime;

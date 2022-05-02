@@ -7,7 +7,5 @@ import lombok.Data;
 @Data
 public class InRating {
 
-    private double starCount;
-    private Movie movie;
-    private User user;
+    private int starCount;
 }

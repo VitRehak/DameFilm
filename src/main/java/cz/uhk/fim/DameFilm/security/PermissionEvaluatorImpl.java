@@ -2,14 +2,9 @@ package cz.uhk.fim.DameFilm.security;
 
 
 import cz.uhk.fim.DameFilm.dto.out.OutMovie;
-import cz.uhk.fim.DameFilm.entity.user.Role;
-import cz.uhk.fim.DameFilm.entity.user.User;
 import cz.uhk.fim.DameFilm.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component(value = "permissionEvaluator")
 public class PermissionEvaluatorImpl implements PermissionEvaluator {

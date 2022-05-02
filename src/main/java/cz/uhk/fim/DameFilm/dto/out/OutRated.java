@@ -3,6 +3,6 @@ package cz.uhk.fim.DameFilm.dto.out;
 import lombok.Data;
 
 @Data
-public class OutRating {
-    private int starCount;
+public class OutRated {
+    private boolean rated;
 }

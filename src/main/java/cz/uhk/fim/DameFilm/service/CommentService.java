@@ -6,7 +6,7 @@ import cz.uhk.fim.DameFilm.dto.out.OutComment;
 import java.util.List;
 
 public interface CommentService {
-    OutComment addComment(InComment comment);
+    OutComment addComment(InComment comment, long id);
 
     List<OutComment> getComments(long id);
 }

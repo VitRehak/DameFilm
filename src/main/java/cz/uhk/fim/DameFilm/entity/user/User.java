@@ -17,7 +17,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id" )
+    @Column(name = "user_id")
     private long userId;
 
     @Column(nullable = false)
@@ -37,4 +37,13 @@ public class User {
     private String lastname;
     private String firstname;
     private ZonedDateTime dateOfRegistration;
+
+    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Movie> movies;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "liker", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Rating> ratings;
 }

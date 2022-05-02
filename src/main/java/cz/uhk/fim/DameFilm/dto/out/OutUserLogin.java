@@ -6,7 +6,8 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class OutUserToken {
+public class OutUserLogin {
     private String token;
     private List<Role> roles;
+    private long userId;
 }
