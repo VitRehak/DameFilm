@@ -3,6 +3,8 @@ package cz.uhk.fim.DameFilm.api.controller;
 import cz.uhk.fim.DameFilm.api.url.UrlConstant;
 import cz.uhk.fim.DameFilm.dto.in.InMovie;
 import cz.uhk.fim.DameFilm.dto.out.OutMovie;
+import cz.uhk.fim.DameFilm.entity.movie.AgeRating;
+import cz.uhk.fim.DameFilm.entity.user.Role;
 import cz.uhk.fim.DameFilm.entity.user.User;
 import cz.uhk.fim.DameFilm.security.JwtUserDetails;
 import cz.uhk.fim.DameFilm.service.MovieService;
@@ -33,6 +35,12 @@ public class MovieController {
     public List<OutMovie> getMovies() {
         log.info("Get All Movies EndPoint");
         return movieService.getMovies();
+    }
+
+    @GetMapping("/agerating")
+    public List<AgeRating> getAgeRating() {
+        log.info("List Of Age Ratings EndPoint");
+        return List.of(AgeRating.values());
     }
 
     @GetMapping("/detail/{id}")

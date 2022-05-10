@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +33,8 @@ public class MovieServiceImpl implements MovieService {
     ModelMapper modelMapper;
     @Autowired
     Clock clock;
+    @Autowired
+    DateTimeFormatter customDateTimeFormatter;
 
 
     @Override
@@ -48,6 +51,8 @@ public class MovieServiceImpl implements MovieService {
         } else {
             outMovie.setAverageRating(averageRating.get());
         }
+        outMovie.setCreate(movie.get().getCreate().format(customDateTimeFormatter));
+        outMovie.setLastUpdate(movie.get().getLastUpdate().format(customDateTimeFormatter));
         log.error("Movie Loaded");
         return outMovie;
     }

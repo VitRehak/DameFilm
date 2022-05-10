@@ -8,5 +8,5 @@ import java.time.ZonedDateTime;
 public class OutComment {
 
     private String text;
-    private ZonedDateTime send;
+    private String send;
 }

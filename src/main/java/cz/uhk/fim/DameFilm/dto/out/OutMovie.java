@@ -11,8 +11,8 @@ public class OutMovie {
     private long movieId;
     private String name;
     private String director;
-    private ZonedDateTime create;
-    private ZonedDateTime lastUpdate;
+    private String create;
+    private String lastUpdate;
     private List<String> actors;
     private AgeRating ageRating;
     private OutUserProfile publisher;

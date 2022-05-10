@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,7 +34,8 @@ public class CommentServiceImpl implements CommentService {
     ModelMapper modelMapper;
     @Autowired
     Clock clock;
-
+    @Autowired
+    DateTimeFormatter customDateTimeFormatter;
 
     @Override
     public OutComment addComment(InComment comment, long id) {
@@ -55,6 +57,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<OutComment> getComments(long id) {
         List<Comment> comments = commentRepository.findAllFromMovie(id);
-        return comments.stream().map(c -> modelMapper.map(c, OutComment.class)).collect(Collectors.toList());
+        List<OutComment> commentsOut = comments.stream().map(c -> modelMapper.map(c, OutComment.class)).collect(Collectors.toList());
+        for (int i = 0; i < commentsOut.size(); i++) {
+            commentsOut.get(i).setSend(comments.get(i).getSend().format(customDateTimeFormatter));
+        }
+        return commentsOut;
     }
 }

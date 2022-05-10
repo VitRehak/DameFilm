@@ -25,7 +25,7 @@ public class JwtTokenProvider {
 
     private static Date calculateExpirationDate() {
         Date now = new Date();
-        return new Date(now.getTime() + 60 * 60 * 8 * 1000);
+        return new Date(now.getTime() + 8* 60 * 60 * 1000);
     }
 
     public String createToken(String email) {
@@ -61,6 +61,7 @@ public class JwtTokenProvider {
                     .setSigningKey(encodeSecretKey())
                     .parseClaimsJws(token)
                     .getBody();
+            System.out.println(body);
             return !body.getExpiration().before(new Date());
         } catch (ExpiredJwtException | IllegalArgumentException | SignatureException | MalformedJwtException | UnsupportedJwtException e) {
             e.printStackTrace();

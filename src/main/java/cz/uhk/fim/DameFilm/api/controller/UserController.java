@@ -6,6 +6,7 @@ import cz.uhk.fim.DameFilm.dto.in.LoginUser;
 import cz.uhk.fim.DameFilm.dto.in.RegisterUser;
 import cz.uhk.fim.DameFilm.dto.out.OutUserProfile;
 import cz.uhk.fim.DameFilm.dto.out.OutUserLogin;
+import cz.uhk.fim.DameFilm.entity.user.Role;
 import cz.uhk.fim.DameFilm.security.JwtTokenProvider;
 import cz.uhk.fim.DameFilm.security.UserSecurityService;
 import cz.uhk.fim.DameFilm.service.AuthService;
@@ -15,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Log4j2
 @RestController
@@ -48,14 +51,20 @@ public class UserController {
         return authService.getUser(id);
     }
 
-    @PutMapping("/profile/update/{id}")
+    @GetMapping("/roles")
+    public List<Role> getRoles() {
+        log.info("List of Roles EndPoint");
+        return List.of(Role.values());
+    }
+
+    @PutMapping("/update/{id}")
     @PreAuthorize("@permissionEvaluator.canEditUser(principal, #id,)")
     public ResponseEntity<OutUserProfile> update(@RequestBody InUser user, @PathVariable long id) {
         log.info("User Data Update EndPoint");
         return new ResponseEntity<>(authService.updateUser(user, id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/profile/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("@permissionEvaluator.canEditUser(principal, #id,)")
     public OutUserProfile delete(@PathVariable long id) {
         log.info("Delete User EndPoint");

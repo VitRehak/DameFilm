@@ -5,6 +5,7 @@ import cz.uhk.fim.DameFilm.dto.in.LoginUser;
 import cz.uhk.fim.DameFilm.dto.in.RegisterUser;
 import cz.uhk.fim.DameFilm.dto.out.OutUserProfile;
 import cz.uhk.fim.DameFilm.dto.out.OutUserLogin;
+import cz.uhk.fim.DameFilm.entity.user.Role;
 import cz.uhk.fim.DameFilm.entity.user.User;
 import cz.uhk.fim.DameFilm.repository.UserRepository;
 import cz.uhk.fim.DameFilm.security.JwtTokenProvider;
@@ -15,7 +16,10 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 @Log4j2
@@ -30,6 +34,8 @@ public class AuthServiceImpl implements AuthService {
     private ModelMapper modelMapper;
     @Autowired
     private Clock clock;
+    @Autowired
+    private DateTimeFormatter customDateTimeFormatter;
 
     @Override
     public OutUserLogin login(LoginUser user) {
@@ -65,14 +71,16 @@ public class AuthServiceImpl implements AuthService {
         User userByEmail = modelMapper.map(user, User.class);
         userByEmail.setDateOfRegistration(ZonedDateTime.now(clock));
         userByEmail.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+        if(userByEmail.getRoles().size() == 0)
+            userByEmail.setRoles(List.of(Role.ROLE_USER));
         userRepository.save(userByEmail);
 
         log.info("Registered User with username:" + userByEmail.getUsername());
-        OutUserLogin token = new OutUserLogin();
-        token.setToken(jwtTokenProvider.createToken(user.getEmail()));
-        token.setRoles(userByEmail.getRoles());
-        token.setUserId(userByEmail.getUserId());
-        return token;
+        OutUserLogin outUserLogin = new OutUserLogin();
+        outUserLogin.setToken(jwtTokenProvider.createToken(user.getEmail()));
+        outUserLogin.setRoles(userByEmail.getRoles());
+        outUserLogin.setUserId(userByEmail.getUserId());
+        return outUserLogin;
     }
 
     @Override
@@ -83,7 +91,9 @@ public class AuthServiceImpl implements AuthService {
             return null;
         }
         log.error("User Loaded");
-        return modelMapper.map(user.get(), OutUserProfile.class);
+        OutUserProfile outUser = modelMapper.map(user.get(), OutUserProfile.class);
+        outUser.setDateOfRegistration(user.get().getDateOfRegistration().format(customDateTimeFormatter));
+        return outUser;
     }
 
     @Override
@@ -111,9 +121,6 @@ public class AuthServiceImpl implements AuthService {
         dbUser.setUsername(appUser.getUsername());
         dbUser.setFirstname(appUser.getFirstname());
         dbUser.setLastname(appUser.getLastname());
-        if (appUser.getPassword() != null)
-            dbUser.setPassword(BCrypt.hashpw(appUser.getPassword(), BCrypt.gensalt()));
-
 
         userRepository.save(dbUser);
         log.error("User Updated");
